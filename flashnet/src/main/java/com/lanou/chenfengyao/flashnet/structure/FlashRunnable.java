@@ -1,4 +1,4 @@
-package com.chen.lanou.structure;
+package com.lanou.chenfengyao.flashnet.structure;
 
 /**
  * Created by ChenFengYao on 16/5/12.
