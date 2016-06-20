@@ -8,10 +8,9 @@ import android.os.Message;
 import android.util.Log;
 import android.widget.ImageView;
 
-import com.lanou.chenfengyao.flashnet.OkHttpUtil;
+import com.lanou.chenfengyao.flashnet.netengine.OkHttpUtil;
 import com.lanou.chenfengyao.flashnet.corepool.CoreSingleThreadPool;
 import com.lanou.chenfengyao.flashnet.image.cache.DoubleCache;
-import com.lanou.chenfengyao.flashnet.interfaces.NetListener;
 import com.lanou.chenfengyao.flashnet.utils.IOUtils;
 
 import java.io.IOException;
