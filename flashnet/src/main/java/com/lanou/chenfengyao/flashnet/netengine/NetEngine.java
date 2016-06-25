@@ -1,7 +1,11 @@
 package com.lanou.chenfengyao.flashnet.netengine;
 
+import android.graphics.Bitmap;
+
 import com.lanou.chenfengyao.flashnet.netengine.listenter.ErrorListener;
 import com.lanou.chenfengyao.flashnet.netengine.listenter.SuccessListener;
+
+import java.io.InputStream;
 
 /**
  * Created by ChenFengYao on 16/6/20.
@@ -9,8 +13,7 @@ import com.lanou.chenfengyao.flashnet.netengine.listenter.SuccessListener;
  */
 public interface NetEngine {
     //获得get数据
-    void getData(String url,
-                 SuccessListener successListener,
-                 ErrorListener errorListener);
+    Response getData(String url);
+    Bitmap getBitmap(String url,int reqW,int reqH);
 
 }

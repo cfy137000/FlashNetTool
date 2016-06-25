@@ -8,9 +8,12 @@ import android.os.Message;
 import android.util.Log;
 import android.widget.ImageView;
 
+import com.lanou.chenfengyao.flashnet.netengine.EngineFactory;
+import com.lanou.chenfengyao.flashnet.netengine.NetEngine;
 import com.lanou.chenfengyao.flashnet.netengine.OkHttpUtil;
 import com.lanou.chenfengyao.flashnet.corepool.CoreSingleThreadPool;
 import com.lanou.chenfengyao.flashnet.image.cache.DoubleCache;
+import com.lanou.chenfengyao.flashnet.netengine.Response;
 import com.lanou.chenfengyao.flashnet.utils.IOUtils;
 
 import java.io.IOException;
@@ -26,14 +29,16 @@ public class ImageLoader {
     private CoreSingleThreadPool threadPool;
     private DoubleCache doubleCache;
     private static ImageLoader imageLoader;
-    private Handler mMainHandler = new Handler(Looper.getMainLooper()){
+    private NetEngine netEngine;
+
+
+    private Handler mMainHandler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message msg) {
             //在主线程获得Bitmap等信息
             LoaderResult result = (LoaderResult) msg.obj;
             ImageView imageView = result.imageView;
             imageView.setImageBitmap(result.bitmap);
-            Log.d("ImageLoader", "handler");
 
         }
     };
@@ -42,6 +47,8 @@ public class ImageLoader {
     private ImageLoader() {
         threadPool = CoreSingleThreadPool.getInstance();
         doubleCache = new DoubleCache();
+        //获取默认的网络加载引擎
+        netEngine = EngineFactory.getDefaultEngine();
     }
 
     //单例的入口方法
@@ -58,7 +65,6 @@ public class ImageLoader {
 
     //直接把图片绑定到ImageView上
     public void bindBitmap(final String url, final ImageView imageView, int reqWidth, int reqHeight) {
-        Log.d("ImageLoader", "bind");
         final Bitmap bitmap = doubleCache.getBitmap(url);
         if (bitmap != null) {
             //TODO 加上缩放
@@ -68,14 +74,12 @@ public class ImageLoader {
         Runnable loadBitmapTask = new Runnable() {
             @Override
             public void run() {
-                Log.d("ImageLoader","run");
                 Bitmap newBitmap = downloadBitmapFromURL(url);
                 if (newBitmap != null) {
-                    LoaderResult result = new LoaderResult(imageView,url,newBitmap);
-                    mMainHandler.obtainMessage(Values.NET_SUCCESS,result)
+                    LoaderResult result = new LoaderResult(imageView, url, newBitmap);
+                    mMainHandler.obtainMessage(Values.NET_SUCCESS, result)
                             .sendToTarget();
                 }
-                Log.d("ImageLoader", "bitmap==null:" + (bitmap == null));
             }
         };
         threadPool.execute(loadBitmapTask);
@@ -88,25 +92,28 @@ public class ImageLoader {
      * @return 拉取的Bitmap, 如果返回null证明没有拉取陈宫
      */
     private Bitmap downloadBitmapFromURL(String URL) {
-        Log.d("ImageLoader", "down");
         Bitmap bitmap = null;
         //获得返回的输入流
         InputStream inputStream = null;
-        try {
-            inputStream = OkHttpUtil.getInstance().getSync(URL).body().byteStream();
-            Log.d("ImageLoader", "inputStream==null:" + (inputStream == null));
+
+
+        Response response = netEngine.getData(URL);
+        if (response.getResultCode() == 200) {
+            inputStream = response.getInputStream();
+            //请求网络图片成功
+            //TODO 在创建图片之前需要根据ImageView的宽高来确定图片大小
             bitmap = BitmapFactory.decodeStream(inputStream);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
             IOUtils.close(inputStream);
-        }
+
             Log.d("ImageLoader", "bitmap==null:" + (bitmap == null));
+        } else {
+            //TODO 请求网络图片失败了
+        }
 
         return bitmap;
     }
 
-    private static class LoaderResult{
+    private static class LoaderResult {
         public ImageView imageView;
         public String url;
         public Bitmap bitmap;
