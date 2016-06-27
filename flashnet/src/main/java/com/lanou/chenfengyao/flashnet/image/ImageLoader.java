@@ -1,5 +1,6 @@
 package com.lanou.chenfengyao.flashnet.image;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
@@ -31,97 +32,34 @@ public class ImageLoader {
     private static ImageLoader imageLoader;
     private NetEngine netEngine;
 
-
+    //主线程的回调Handler
     private Handler mMainHandler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message msg) {
             //在主线程获得Bitmap等信息
-            LoaderResult result = (LoaderResult) msg.obj;
-            ImageView imageView = result.imageView;
-            imageView.setImageBitmap(result.bitmap);
-
         }
     };
 
 
-    private ImageLoader() {
+    private ImageLoader(Context context) {
         threadPool = CoreSingleThreadPool.getInstance();
-        doubleCache = new DoubleCache();
+        doubleCache = new DoubleCache(context);
         //获取默认的网络加载引擎
         netEngine = EngineFactory.getDefaultEngine();
     }
 
     //单例的入口方法
-    public static ImageLoader getInstance() {
+    public static ImageLoader getInstance(Context context) {
         if (imageLoader == null) {
             synchronized (ImageLoader.class) {
                 if (imageLoader == null) {
-                    imageLoader = new ImageLoader();
+                    imageLoader = new ImageLoader(context);
                 }
             }
         }
         return imageLoader;
     }
 
-    //直接把图片绑定到ImageView上
-    public void bindBitmap(final String url, final ImageView imageView, int reqWidth, int reqHeight) {
-        final Bitmap bitmap = doubleCache.getBitmap(url);
-        if (bitmap != null) {
-            //TODO 加上缩放
-            imageView.setImageBitmap(bitmap);
-            return;
-        }
-        Runnable loadBitmapTask = new Runnable() {
-            @Override
-            public void run() {
-                Bitmap newBitmap = downloadBitmapFromURL(url);
-                if (newBitmap != null) {
-                    LoaderResult result = new LoaderResult(imageView, url, newBitmap);
-                    mMainHandler.obtainMessage(Values.NET_SUCCESS, result)
-                            .sendToTarget();
-                }
-            }
-        };
-        threadPool.execute(loadBitmapTask);
-    }
-
-    /**
-     * 从网络拉取Bitmap
-     *
-     * @param URL 网址
-     * @return 拉取的Bitmap, 如果返回null证明没有拉取陈宫
-     */
-    private Bitmap downloadBitmapFromURL(String URL) {
-        Bitmap bitmap = null;
-        //获得返回的输入流
-        InputStream inputStream = null;
 
 
-        Response response = netEngine.getData(URL);
-        if (response.getResultCode() == 200) {
-            inputStream = response.getInputStream();
-            //请求网络图片成功
-            //TODO 在创建图片之前需要根据ImageView的宽高来确定图片大小
-            bitmap = BitmapFactory.decodeStream(inputStream);
-            IOUtils.close(inputStream);
-
-            Log.d("ImageLoader", "bitmap==null:" + (bitmap == null));
-        } else {
-            //TODO 请求网络图片失败了
-        }
-
-        return bitmap;
-    }
-
-    private static class LoaderResult {
-        public ImageView imageView;
-        public String url;
-        public Bitmap bitmap;
-
-        public LoaderResult(ImageView imageView, String url, Bitmap bitmap) {
-            this.imageView = imageView;
-            this.url = url;
-            this.bitmap = bitmap;
-        }
-    }
 }

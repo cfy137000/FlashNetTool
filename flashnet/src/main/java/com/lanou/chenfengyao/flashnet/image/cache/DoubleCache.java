@@ -11,10 +11,6 @@ import android.graphics.Bitmap;
 public class DoubleCache implements BitmapCache {
     private MemoryCache memoryCache;
     private DiskCache diskCache;
-    //硬盘缓存的最小容量
-    private static final long DISK_CACHE_SIZE = 1024 * 1024 * 50;
-    //是否有硬盘缓存
-    private boolean mIsDiskLruCacheCreated = false;
 
     public DoubleCache(Context mContext) {
         memoryCache = new MemoryCache();
