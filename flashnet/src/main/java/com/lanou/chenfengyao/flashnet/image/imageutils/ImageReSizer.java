@@ -1,4 +1,4 @@
-package com.lanou.chenfengyao.flashnet.image;
+package com.lanou.chenfengyao.flashnet.image.imageutils;
 
 import android.content.res.Resources;
 import android.graphics.Bitmap;
