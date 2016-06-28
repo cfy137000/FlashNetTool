@@ -1,24 +1,14 @@
 package com.lanou.chenfengyao.flashnet.image;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.util.Log;
-import android.widget.ImageView;
 
 import com.lanou.chenfengyao.flashnet.netengine.EngineFactory;
 import com.lanou.chenfengyao.flashnet.netengine.NetEngine;
-import com.lanou.chenfengyao.flashnet.netengine.OkHttpUtil;
 import com.lanou.chenfengyao.flashnet.corepool.CoreSingleThreadPool;
-import com.lanou.chenfengyao.flashnet.image.cache.DoubleCache;
-import com.lanou.chenfengyao.flashnet.netengine.Response;
-import com.lanou.chenfengyao.flashnet.utils.IOUtils;
-
-import java.io.IOException;
-import java.io.InputStream;
+import com.lanou.chenfengyao.flashnet.image.cache.TribleCache;
 
 /**
  * Created by ChenFengYao on 16/5/21.
@@ -28,7 +18,7 @@ import java.io.InputStream;
  */
 public class ImageLoader {
     private CoreSingleThreadPool threadPool;
-    private DoubleCache doubleCache;
+    private TribleCache tribleCache;
     private static ImageLoader imageLoader;
     private NetEngine netEngine;
 
@@ -43,7 +33,7 @@ public class ImageLoader {
 
     private ImageLoader(Context context) {
         threadPool = CoreSingleThreadPool.getInstance();
-        doubleCache = new DoubleCache(context);
+        tribleCache = new TribleCache(context);
         //获取默认的网络加载引擎
         netEngine = EngineFactory.getDefaultEngine();
     }

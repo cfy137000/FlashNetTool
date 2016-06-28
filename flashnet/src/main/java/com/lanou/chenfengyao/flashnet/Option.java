@@ -52,7 +52,8 @@ public class Option {
 
     private Option() {
         dirPath = "/sdcard/Download/";
-        memoryMaxKB = (int) (Runtime.getRuntime().maxMemory() / 1024) / 8;
+        //默认1级缓存是 可运行内存的10分之一
+        memoryMaxKB = (int) (Runtime.getRuntime().maxMemory() / 1024) / 12;
         engineMode = EngineMode.HttpUrlConnection;
     }
 }
