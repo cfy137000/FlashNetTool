@@ -15,6 +15,7 @@ import com.lanou.chenfengyao.flashnet.image.cache.TribleCache;
  * 网络请求的核心
  * 图片的异步加载
  * 图片的压缩
+ * ImageLoader不能单例,可以有多个ImageLoader
  */
 public class ImageLoader {
     private CoreSingleThreadPool threadPool;
@@ -38,18 +39,9 @@ public class ImageLoader {
         netEngine = EngineFactory.getDefaultEngine();
     }
 
-    //单例的入口方法
+    //入口方法
     public static ImageLoader getInstance(Context context) {
-        if (imageLoader == null) {
-            synchronized (ImageLoader.class) {
-                if (imageLoader == null) {
-                    imageLoader = new ImageLoader(context);
-                }
-            }
-        }
-        return imageLoader;
+        return new ImageLoader(context);
     }
-
-
 
 }
