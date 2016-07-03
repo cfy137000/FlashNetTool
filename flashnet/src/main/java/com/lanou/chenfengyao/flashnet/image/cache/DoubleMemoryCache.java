@@ -8,13 +8,13 @@ import android.graphics.Bitmap;
  * Created by ChenFengYao on 16/5/21.
  * 包括内存缓存和硬盘缓存
  */
-public class TribleCache implements BitmapCache {
+public class DoubleMemoryCache implements BitmapCache {
     private MemoryCache memoryCache;
-    private DiskCache diskCache;
+
     //二级内存缓存
     private SecondMemoryCache secondMemoryCache;
 
-    public TribleCache(Context mContext) {
+    public DoubleMemoryCache(Context mContext) {
         memoryCache = new MemoryCache() {
             //移除方法
             @Override
@@ -25,13 +25,12 @@ public class TribleCache implements BitmapCache {
                 super.entryRemoved(evicted, key, oldValue, newValue);
             }
         };
-        diskCache = new DiskCache(mContext);
+        secondMemoryCache = new SecondMemoryCache();
     }
 
     @Override
     public void putBitmap(String url, Bitmap bitmap) {
         memoryCache.put(url, bitmap);
-        diskCache.putBitmap(url, bitmap);
     }
 
     @Override
@@ -39,9 +38,6 @@ public class TribleCache implements BitmapCache {
         Bitmap bitmap = memoryCache.get(url);
         if (bitmap == null) {
             bitmap = secondMemoryCache.getBitmap(url);
-            if (bitmap == null) {
-                bitmap = diskCache.getBitmap(url);
-            }
         }
         return bitmap;
     }

@@ -5,10 +5,11 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 
+import com.lanou.chenfengyao.flashnet.image.cache.DiskCache;
 import com.lanou.chenfengyao.flashnet.netengine.EngineFactory;
 import com.lanou.chenfengyao.flashnet.netengine.NetEngine;
 import com.lanou.chenfengyao.flashnet.corepool.CoreSingleThreadPool;
-import com.lanou.chenfengyao.flashnet.image.cache.TribleCache;
+import com.lanou.chenfengyao.flashnet.image.cache.DoubleMemoryCache;
 
 /**
  * Created by ChenFengYao on 16/5/21.
@@ -19,9 +20,13 @@ import com.lanou.chenfengyao.flashnet.image.cache.TribleCache;
  */
 public class ImageLoader {
     private CoreSingleThreadPool threadPool;
-    private TribleCache tribleCache;
+    //二级内存缓存
+    private DoubleMemoryCache doubleMemoryCache;
+    //硬盘缓存
+    private DiskCache diskCache;
     private static ImageLoader imageLoader;
     private NetEngine netEngine;
+
 
     //主线程的回调Handler
     private Handler mMainHandler = new Handler(Looper.getMainLooper()) {
@@ -34,9 +39,12 @@ public class ImageLoader {
 
     private ImageLoader(Context context) {
         threadPool = CoreSingleThreadPool.getInstance();
-        tribleCache = new TribleCache(context);
+        //初始化缓存
+        doubleMemoryCache = new DoubleMemoryCache(context);
+        diskCache = new DiskCache(context);
         //获取默认的网络加载引擎
         netEngine = EngineFactory.getDefaultEngine();
+
     }
 
     //入口方法
