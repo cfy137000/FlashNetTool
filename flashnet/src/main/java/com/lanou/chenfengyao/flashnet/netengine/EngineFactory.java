@@ -15,7 +15,7 @@ public class EngineFactory {
     public static NetEngine getEngineWithMode(EngineMode engineMode){
         switch (engineMode){
             case HttpUrlConnection:
-                return HttpTool.getInstance();
+                return new HttpTool();
         }
         return null;
     }

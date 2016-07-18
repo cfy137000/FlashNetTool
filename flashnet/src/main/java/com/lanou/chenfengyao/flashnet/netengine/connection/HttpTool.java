@@ -21,23 +21,7 @@ import java.net.URL;
  * Created by ChenFengYao on 16/6/20.
  */
 public class HttpTool implements NetEngine {
-    private static HttpTool httpTool;
 
-    public static HttpTool getInstance() {
-        if (httpTool == null) {
-            synchronized (HttpTool.class) {
-                if (httpTool == null) {
-                    httpTool = new HttpTool();
-                }
-            }
-        }
-        return httpTool;
-    }
-
-    private HttpTool() {
-    }
-
-    ;
 
     @Override
     public Response getData(String url) {
@@ -80,10 +64,10 @@ public class HttpTool implements NetEngine {
             httpURLConnection = (HttpURLConnection) requestUrl.openConnection();
             inputStream = httpURLConnection.getInputStream();
             bitmap = BitmapFactory.decodeStream(inputStream);
-            BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
-
-            response.setResultCode(httpURLConnection.getResponseCode());
-            response.setInputStream(bufferedInputStream);
+//            BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
+//
+//            response.setResultCode(httpURLConnection.getResponseCode());
+//            response.setInputStream(bufferedInputStream);
 
         } catch (MalformedURLException e) {
             e.printStackTrace();

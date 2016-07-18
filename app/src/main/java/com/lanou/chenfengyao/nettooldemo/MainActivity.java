@@ -11,11 +11,14 @@ import android.widget.ImageView;
 import com.lanou.chenfengyao.flashnet.image.ImageLoader;
 
 public class MainActivity extends AppCompatActivity {
-
+    private ImageView imageView;
+    private String url = "http://img4.imgtn.bdimg.com/it/u=3990298113,517574477&fm=21&gp=0.jpg";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        imageView = (ImageView) findViewById(R.id.mainIv);
+        ImageLoader.getInstance(this).getImg(url,imageView);
     }
     
 }

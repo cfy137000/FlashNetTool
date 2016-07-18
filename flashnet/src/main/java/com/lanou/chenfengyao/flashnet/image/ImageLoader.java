@@ -1,9 +1,11 @@
 package com.lanou.chenfengyao.flashnet.image;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.widget.ImageView;
 
 import com.lanou.chenfengyao.flashnet.image.cache.DiskCache;
 import com.lanou.chenfengyao.flashnet.netengine.EngineFactory;
@@ -26,6 +28,7 @@ public class ImageLoader {
     private DiskCache diskCache;
     private static ImageLoader imageLoader;
     private NetEngine netEngine;
+    public static final int TAG_KEY = 0x01;
 
 
     //主线程的回调Handler
@@ -33,8 +36,23 @@ public class ImageLoader {
         @Override
         public void handleMessage(Message msg) {
             //在主线程获得Bitmap等信息
+            switch (msg.what){
+                case 1:
+                    Result result = (Result) msg.obj;
+                    result.imageView.setImageBitmap(result.bitmap);
+                    break;
+            }
         }
     };
+
+    //获得ImageView的方法
+    public void getImg(String url, ImageView imageView){
+        imageView.setTag(url);
+        ImgRunnable runnable = new ImgRunnable(imageView,url,mMainHandler);
+        threadPool.execute(runnable);
+    }
+
+
 
 
     private ImageLoader(Context context) {
@@ -44,12 +62,16 @@ public class ImageLoader {
         diskCache = new DiskCache(context);
         //获取默认的网络加载引擎
         netEngine = EngineFactory.getDefaultEngine();
-
     }
 
     //入口方法
     public static ImageLoader getInstance(Context context) {
         return new ImageLoader(context);
+    }
+
+    public static class Result{
+        ImageView imageView;
+        Bitmap bitmap;
     }
 
 }
