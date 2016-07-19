@@ -42,6 +42,7 @@ public class ImageLoader {
                 case 1:
                     Result result = (Result) msg.obj;
                     result.imageView.setImageBitmap(result.bitmap);
+                    Log.d("ImageLoader", "result.bitmap.getHeight():" + result.bitmap.getHeight());
                     break;
             }
         }
