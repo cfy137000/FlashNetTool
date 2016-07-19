@@ -58,7 +58,7 @@ public class ImageLoader {
             imageView.setImageBitmap(null);
         }
         BitmapHelper.BitmapInfo bitmapInfo = BitmapHelper.getReqInfo(imageView);
-        ImgRunnable runnable = new ImgRunnable(imageView, bitmapInfo.height, bitmapInfo.width, url, mMainHandler);
+        ImgRunnable runnable = new ImgRunnable(doubleMemoryCache, diskCache, imageView, bitmapInfo.height, bitmapInfo.width, url, mMainHandler);
         threadPool.execute(runnable);
     }
 

@@ -30,6 +30,9 @@ public class DoubleMemoryCache implements BitmapCache {
 
     @Override
     public void putBitmap(String url, Bitmap bitmap) {
+        if(bitmap==null||url==null){
+            return;
+        }
         memoryCache.put(url, bitmap);
     }
 

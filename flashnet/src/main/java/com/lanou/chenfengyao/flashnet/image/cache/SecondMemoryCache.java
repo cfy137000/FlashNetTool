@@ -28,6 +28,9 @@ public class SecondMemoryCache implements BitmapCache{
     @Override
     public Bitmap getBitmap(String url) {
         SoftReference<Bitmap> softReference = hashMap.get(url);
+        if(softReference == null){
+            return null;
+        }
         if(softReference.get()!=null){
             //找到了图片,把它返回
             return softReference.get();
