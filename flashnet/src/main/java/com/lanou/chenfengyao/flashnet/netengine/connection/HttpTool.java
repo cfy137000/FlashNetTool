@@ -8,6 +8,8 @@ import com.lanou.chenfengyao.flashnet.netengine.NetEngine;
 import com.lanou.chenfengyao.flashnet.netengine.Response;
 import com.lanou.chenfengyao.flashnet.netengine.listenter.ErrorListener;
 import com.lanou.chenfengyao.flashnet.netengine.listenter.SuccessListener;
+import com.lanou.chenfengyao.flashnet.utils.BitmapHelper;
+import com.lanou.chenfengyao.flashnet.utils.IOUtils;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -50,31 +52,28 @@ public class HttpTool implements NetEngine {
     }
 
 
-    //TODO 在使用HttpURLConnection 来加载图片的时候
-    //如果直接计算图片的大小,则无法使用 InputStream
+    //使用HttpURLConnection 来加载图片的时候
     @Override
-    public Bitmap getBitmap(String url, int reqW, int reqH) {
+    public Bitmap getBitmap(String uri, int reqW, int reqH) {
         HttpURLConnection httpURLConnection = null;
-        URL requestUrl = null;
         Bitmap bitmap = null;
-        InputStream inputStream = null;
-        Response response = new Response();
+        BufferedInputStream is = null;
         try {
-            requestUrl = new URL(url);
-            httpURLConnection = (HttpURLConnection) requestUrl.openConnection();
-            inputStream = httpURLConnection.getInputStream();
-            bitmap = BitmapFactory.decodeStream(inputStream);
-//            BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
-//
-//            response.setResultCode(httpURLConnection.getResponseCode());
-//            response.setInputStream(bufferedInputStream);
-
+            URL url = new URL(uri);
+            httpURLConnection = (HttpURLConnection) url.openConnection();
+            is = new BufferedInputStream(httpURLConnection.getInputStream());
+            is.mark(BitmapHelper.MAX_READ_LIMIT_PER_IMG);
+            int scaleFactor = BitmapHelper.findScaleFactor(reqW, reqH, is);
+            is.reset();
+            bitmap = BitmapHelper.scaleBitmap(scaleFactor, is);
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
+            IOUtils.close(is);
             httpURLConnection.disconnect();
+
         }
 
         return bitmap;
