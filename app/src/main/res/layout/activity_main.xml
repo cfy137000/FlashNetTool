@@ -9,11 +9,9 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.lanou.chenfengyao.nettooldemo.MainActivity">
 
-    <ImageView
-        android:id="@+id/mainIv"
-        android:layout_width="100px"
-        android:layout_height="100px"
-
-        />
+    <ListView
+        android:id="@+id/main_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
     
 </RelativeLayout>

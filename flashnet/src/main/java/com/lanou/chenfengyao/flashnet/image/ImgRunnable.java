@@ -39,6 +39,7 @@ public class ImgRunnable implements Runnable {
         ImageLoader.Result result = new ImageLoader.Result();
         result.bitmap = bitmap;
         result.imageView = imageView;
+        result.tag = url;
         Message message = handler.obtainMessage();
         message.what = 1;
         message.obj = result;

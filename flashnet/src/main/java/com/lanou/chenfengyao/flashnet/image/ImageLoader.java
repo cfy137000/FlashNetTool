@@ -41,16 +41,22 @@ public class ImageLoader {
             switch (msg.what) {
                 case 1:
                     Result result = (Result) msg.obj;
-                    result.imageView.setImageBitmap(result.bitmap);
-                    Log.d("ImageLoader", "result.bitmap.getHeight():" + result.bitmap.getHeight());
+                    if (result.imageView.getTag().equals(result.tag)) {
+                        result.imageView.setImageBitmap(result.bitmap);
+                    }
                     break;
             }
         }
     };
 
     //获得ImageView的方法
-    public void getImg(String url, ImageView imageView) {
+    public void getImg(String url, ImageView imageView, int defaultId) {
         imageView.setTag(url);
+        if (defaultId > 0) {
+            imageView.setImageResource(defaultId);
+        } else {
+            imageView.setImageBitmap(null);
+        }
         BitmapHelper.BitmapInfo bitmapInfo = BitmapHelper.getReqInfo(imageView);
         ImgRunnable runnable = new ImgRunnable(imageView, bitmapInfo.height, bitmapInfo.width, url, mMainHandler);
         threadPool.execute(runnable);
@@ -74,6 +80,7 @@ public class ImageLoader {
     public static class Result {
         ImageView imageView;
         Bitmap bitmap;
+        String tag;
     }
 
 }
