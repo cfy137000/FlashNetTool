@@ -25,6 +25,7 @@ public class ImgRunnable implements Runnable {
     }
 
     public ImgRunnable(ImageView imageView, String url,Handler handler) {
+
         this(imageView,-1,-1,url,handler);
     }
 

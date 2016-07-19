@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.util.Log;
 import android.widget.ImageView;
 
 import com.lanou.chenfengyao.flashnet.image.cache.DiskCache;
@@ -12,6 +13,7 @@ import com.lanou.chenfengyao.flashnet.netengine.EngineFactory;
 import com.lanou.chenfengyao.flashnet.netengine.NetEngine;
 import com.lanou.chenfengyao.flashnet.corepool.CoreSingleThreadPool;
 import com.lanou.chenfengyao.flashnet.image.cache.DoubleMemoryCache;
+import com.lanou.chenfengyao.flashnet.utils.BitmapHelper;
 
 /**
  * Created by ChenFengYao on 16/5/21.
@@ -36,7 +38,7 @@ public class ImageLoader {
         @Override
         public void handleMessage(Message msg) {
             //在主线程获得Bitmap等信息
-            switch (msg.what){
+            switch (msg.what) {
                 case 1:
                     Result result = (Result) msg.obj;
                     result.imageView.setImageBitmap(result.bitmap);
@@ -46,13 +48,12 @@ public class ImageLoader {
     };
 
     //获得ImageView的方法
-    public void getImg(String url, ImageView imageView){
+    public void getImg(String url, ImageView imageView) {
         imageView.setTag(url);
-        ImgRunnable runnable = new ImgRunnable(imageView,url,mMainHandler);
+        BitmapHelper.BitmapInfo bitmapInfo = BitmapHelper.getReqInfo(imageView);
+        ImgRunnable runnable = new ImgRunnable(imageView, bitmapInfo.height, bitmapInfo.width, url, mMainHandler);
         threadPool.execute(runnable);
     }
-
-
 
 
     private ImageLoader(Context context) {
@@ -69,7 +70,7 @@ public class ImageLoader {
         return new ImageLoader(context);
     }
 
-    public static class Result{
+    public static class Result {
         ImageView imageView;
         Bitmap bitmap;
     }
