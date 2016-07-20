@@ -52,7 +52,7 @@ public class ImgRunnable implements Runnable {
             bitmap = httpTool.getBitmap(url, reqW, reqH);
             if(bitmap!=null) {
                 doubleMemoryCache.putBitmap(url, bitmap);
-                diskCache.putBitmap(url, bitmap);
+               // diskCache.putBitmap(url, bitmap);
             }
         }
         ImageLoader.Result result = new ImageLoader.Result();
