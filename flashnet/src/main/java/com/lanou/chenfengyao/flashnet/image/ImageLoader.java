@@ -9,6 +9,7 @@ import android.util.Log;
 import android.widget.ImageView;
 
 import com.lanou.chenfengyao.flashnet.image.cache.DiskCache;
+import com.lanou.chenfengyao.flashnet.interfaces.NetListener;
 import com.lanou.chenfengyao.flashnet.netengine.EngineFactory;
 import com.lanou.chenfengyao.flashnet.netengine.NetEngine;
 import com.lanou.chenfengyao.flashnet.corepool.CoreSingleThreadPool;
@@ -45,6 +46,11 @@ public class ImageLoader {
                         result.imageView.setImageBitmap(result.bitmap);
                     }
                     break;
+                case 2:
+                    Result bitmapResult = (Result) msg.obj;
+                    NetListener<Bitmap> bitmapNetListener
+                             = bitmapResult.bitmapNetListener;
+                    bitmapNetListener.onNetSuccess(bitmapResult.bitmap);
             }
         }
     };
@@ -60,6 +66,12 @@ public class ImageLoader {
         BitmapHelper.BitmapInfo bitmapInfo = BitmapHelper.getReqInfo(imageView);
         ImgRunnable runnable = new ImgRunnable(doubleMemoryCache, diskCache, imageView, bitmapInfo.height, bitmapInfo.width, url, mMainHandler);
         threadPool.execute(runnable);
+    }
+
+    //获得Bitmap的方法
+    public void getImageBitmap(String url, NetListener<Bitmap> bitmapNetListener){
+        BitmapRunnable bitmapRunnable = new BitmapRunnable(url,mMainHandler,doubleMemoryCache,diskCache,bitmapNetListener);
+        threadPool.execute(bitmapRunnable);
     }
 
 
@@ -81,6 +93,7 @@ public class ImageLoader {
         ImageView imageView;
         Bitmap bitmap;
         String tag;
+        NetListener<Bitmap> bitmapNetListener;
     }
 
 }

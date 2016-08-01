@@ -10,7 +10,12 @@ import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.lanou.chenfengyao.flashnet.image.ImageLoader;
+import com.lanou.chenfengyao.flashnet.richtext.HtmlTextView;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +23,8 @@ public class MainActivity extends AppCompatActivity {
     private String url = "http://img4.imgtn.bdimg.com/it/u=3990298113,517574477&fm=21&gp=0.jpg";
     private List<String> urls;
     private ListView listView;
+    private HtmlTextView mHtmlTextView;
+    private StringBuffer mSb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +34,26 @@ public class MainActivity extends AppCompatActivity {
         initData();
         MainAdapter mainAdapter = new MainAdapter(urls, this);
         listView.setAdapter(mainAdapter);
+
+        mHtmlTextView = (HtmlTextView) findViewById(R.id.main_tv);
+        try {
+            InputStream inputStream = getAssets().open("content.txt");
+            InputStreamReader reader = new InputStreamReader(inputStream);
+            BufferedReader bufferedReader = new BufferedReader(reader);
+            mSb = new StringBuffer();
+            String line = "";
+            while ((line = bufferedReader.readLine()) != null) {
+                mSb.append(line);
+            }
+            bufferedReader.close();
+            reader.close();
+            inputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        String simpleText = mSb.toString();
+        mHtmlTextView.setHtmlFromString(simpleText);
     }
 
     private void initData() {
